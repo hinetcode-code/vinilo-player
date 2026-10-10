@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Vinilo
+Comment=Descarga álbumes completos de YouTube Music
+Exec=vinilo
+Icon=vinilo
+Terminal=false
+Categories=AudioVideo;Audio;Network;
+StartupNotify=true

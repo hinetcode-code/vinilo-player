@@ -1,0 +1,14 @@
+Package: vinilo
+Version: 1.10.2
+Section: sound
+Priority: optional
+Architecture: all
+Depends: python3 (>= 3.10), python3-venv, python3-pip, python3-gi, python3-gi-cairo, gir1.2-gtk-3.0, gir1.2-gdkpixbuf-2.0, python3-mutagen, ffmpeg, curl, unzip, ca-certificates, gir1.2-gstreamer-1.0, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-plugins-bad, gstreamer1.0-libav
+Recommends: gstreamer1.0-pulseaudio, gstreamer1.0-pipewire, gstreamer1.0-alsa
+Maintainer: Vinilo <vinilo@localhost>
+Description: Descargador visual de álbumes de YouTube Music
+ Busca por artista y álbum con autocompletado, escucha cada canción antes
+ de descargar, descarga el álbum completo con carátula y etiquetas, y
+ reproduce tu colección de álbumes descargados. Reintentos configurables.
+ Las dependencias (GTK, ffmpeg, mutagen...) se instalan automáticamente;
+ yt-dlp, ytmusicapi y Deno se descargan al instalar (hace falta conexión).

@@ -28,5 +28,33 @@ sudo apt remove vinilo
 sudo rm -rf /opt/vinilo
 ```
 
+## Código fuente
+
+El repositorio contiene el árbol completo del paquete Debian:
+
+```
+package/
+├── DEBIAN/            control y postinst (instala yt-dlp, ytmusicapi y Deno en /opt/vinilo)
+└── usr/
+    ├── bin/vinilo                         lanzador
+    ├── lib/vinilo/vinilo.py               aplicación (Python + GTK3 + GStreamer)
+    ├── lib/vinilo/setup-deps.sh           reparación de componentes
+    └── share/                             icono, acceso directo y copyright
+build-deb.sh                               construye el .deb
+```
+
+Construir el paquete (requiere `dpkg-deb`):
+
+```bash
+./build-deb.sh
+sudo apt install ./vinilo_1_10_2_all.deb
+```
+
+Ejecutar sin instalar (necesita `python3-gi`, GStreamer, ffmpeg y mutagen en el sistema):
+
+```bash
+python3 package/usr/lib/vinilo/vinilo.py
+```
+
 ## Licencia
 GPL-3.0. Proyecto independiente, sin relación con YouTube ni Google. Si descargas contenido, hazlo solo si tienes derecho a ello y para uso personal.

@@ -1,0 +1,7 @@
+#!/bin/sh
+export PATH="/opt/vinilo/bin:$HOME/.deno/bin:$PATH"
+if [ ! -x /opt/vinilo/venv/bin/python ]; then
+    echo "Vinilo: faltan componentes. Ejecuta:  sudo /usr/lib/vinilo/setup-deps.sh" >&2
+    exit 1
+fi
+exec /opt/vinilo/venv/bin/python /usr/lib/vinilo/vinilo.py "$@"
