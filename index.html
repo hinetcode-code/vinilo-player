@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vinilo — Reproductor de música local y online para Linux</title>
+<meta name="description" content="Vinilo es un reproductor de música para Linux: escucha tu colección local y álbumes de YouTube Music en streaming, con modo disco de vinilo. Opcionalmente, guarda álbumes en tu equipo.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%2315151b'/%3E%3Ccircle cx='64' cy='64' r='48' fill='%230b0b0f'/%3E%3Ccircle cx='64' cy='64' r='18' fill='%23ff3d5a'/%3E%3C/svg%3E">
+<style>
+:root{--a:#ff3d5a;--b:#7b2cff;--bg:#0b0b0f;--card:#15151b;--line:#2a2a33;--txt:#f3f3f6;--mut:#a0a0ad;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font:16px/1.65 system-ui,-apple-system,"Segoe UI",Ubuntu,Roboto,sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.g{background:linear-gradient(135deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+nav{position:sticky;top:0;z-index:9;background:rgba(11,11,15,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.15rem}
+.logo svg{width:30px;height:30px}
+nav ul{display:flex;gap:22px;list-style:none;font-size:.92rem;color:var(--mut)}
+nav ul a:hover{color:var(--txt)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:999px;font-weight:600;border:1px solid var(--line);transition:.2s}
+.btn.p{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#fff;box-shadow:0 8px 28px -8px var(--a)}
+.btn:hover{transform:translateY(-2px)}
+.btn.s:hover{border-color:var(--a)}
+.hero{padding:80px 0 60px;position:relative}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.tag{display:inline-block;font-size:.8rem;padding:4px 14px;border:1px solid var(--line);border-radius:999px;color:var(--mut);margin-bottom:18px}
+h1{font-size:clamp(2.3rem,5.5vw,3.8rem);line-height:1.08;margin-bottom:18px;letter-spacing:-.02em}
+.lead{color:var(--mut);font-size:1.12rem;max-width:34em;margin-bottom:28px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.meta{margin-top:18px;font-size:.85rem;color:var(--mut)}
+.disc{width:min(360px,80vw);aspect-ratio:1;margin:auto;border-radius:50%;position:relative;background:repeating-radial-gradient(circle,#0b0b0f 0 3px,#17171e 3px 4px);box-shadow:0 30px 80px -20px var(--a),0 0 0 8px #15151b;animation:spin 9s linear infinite}
+.disc::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,transparent,rgba(255,255,255,.07),transparent 25%,transparent 50%,rgba(255,255,255,.07),transparent 75%)}
+.disc i{position:absolute;inset:32%;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b))}
+.disc i::after{content:"";position:absolute;inset:44%;border-radius:50%;background:#15151b}
+@keyframes spin{to{transform:rotate(360deg)}}
+section{padding:70px 0}
+.eyebrow{color:var(--a);font-weight:600;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase}
+h2{font-size:clamp(1.7rem,3.6vw,2.4rem);margin:8px 0 14px;letter-spacing:-.01em}
+.sub{color:var(--mut);max-width:42em;margin-bottom:38px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;transition:.25s}
+.card:hover{border-color:var(--a);transform:translateY(-4px)}
+.card .ic{font-size:1.7rem;margin-bottom:10px}
+.card h3{font-size:1.08rem;margin-bottom:6px}
+.card p{color:var(--mut);font-size:.94rem}
+.modes{display:grid;gap:18px}
+.mode{display:grid;grid-template-columns:70px 1fr;gap:20px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px}
+.mode .n{font-size:2.4rem;font-weight:800;line-height:1}
+.mode h3{font-size:1.25rem;margin-bottom:8px}
+.mode p,.mode li{color:var(--mut);font-size:.96rem}
+.mode ul{margin:10px 0 0 18px}
+kbd{background:#22222b;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:.85em}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
+.sw button{width:36px;height:36px;border-radius:50%;border:2px solid transparent;cursor:pointer;outline-offset:3px}
+.sw button.on{border-color:#fff}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:16px;overflow:hidden;font-size:.94rem}
+th,td{text-align:left;padding:13px 18px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em}
+tr:last-child td{border:0}
+.scroll{overflow-x:auto}
+.dl{background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--a) 22%,var(--card)),var(--card));border:1px solid var(--line);border-radius:26px;padding:44px;display:grid;grid-template-columns:1fr 1fr;gap:34px}
+pre{background:#0b0b0f;border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;font:.86rem/1.6 ui-monospace,"DejaVu Sans Mono",monospace;color:#e6e6ee;margin:8px 0 16px}
+.dl h3{margin-bottom:4px;font-size:1rem}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.chips span{font-size:.8rem;padding:4px 12px;border-radius:999px;background:#ffffff12}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600}
+details p{color:var(--mut);margin-top:10px;font-size:.95rem}
+footer{border-top:1px solid var(--line);padding:34px 0;color:var(--mut);font-size:.85rem;text-align:center}
+footer p+p{margin-top:6px}
+@media(max-width:820px){.hero .wrap,.dl{grid-template-columns:1fr}.dl{padding:28px}nav ul{display:none}.mode{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.disc{animation:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#">
+    <svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d5a"/><stop offset="1" stop-color="#7b2cff"/></linearGradient></defs><rect width="128" height="128" rx="28" fill="#15151b"/><circle cx="64" cy="64" r="48" fill="#0b0b0f"/><circle cx="64" cy="64" r="38" fill="none" stroke="#2a2a33" stroke-width="2"/><circle cx="64" cy="64" r="30" fill="none" stroke="#2a2a33" stroke-width="2"/><circle cx="64" cy="64" r="18" fill="url(#lg)"/><circle cx="64" cy="64" r="3.5" fill="#15151b"/></svg>
+    Vinilo
+  </a>
+  <ul><li><a href="#caracteristicas">Características</a></li><li><a href="#modos">Modos</a></li><li><a href="#formatos">Formatos</a></li><li><a href="#descargar">Descargar</a></li><li><a href="#faq">FAQ</a></li></ul>
+  <a class="btn p" href="#descargar" style="padding:8px 18px">Descargar .deb</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <span class="tag">v1.10.2 · Linux · GTK3 · .deb</span>
+    <h1>Toda tu música, local y online, <span class="g">como un disco de vinilo</span></h1>
+    <p class="lead">Un reproductor visual para tu escritorio Linux: pon tu colección local, escucha álbumes de YouTube Music en streaming y disfrútalos en un tocadiscos a pantalla completa. Si quieres, también puedes guardar álbumes en tu equipo.</p>
+    <div class="cta">
+      <a class="btn p" href="https://github.com/hinetcode-code/vinilo-player/releases/download/v1.10.2/vinilo_1_10_2_all.deb" download>⬇ Descargar para Linux (.deb)</a>
+      <a class="btn s" href="#caracteristicas">Ver características</a>
+    </div>
+    <p class="meta">Debian · Ubuntu · Linux Mint y derivadas · Python ≥ 3.10</p>
+  </div>
+  <div class="disc" role="img" aria-label="Disco de vinilo girando"><i></i></div>
+</div></header>
+
+<section id="caracteristicas"><div class="wrap">
+  <span class="eyebrow">Características</span>
+  <h2>Hecho para escuchar</h2>
+  <p class="sub">Una sola aplicación para tu música guardada y la que está en la nube, con una interfaz cuidada y control desde el teclado multimedia.</p>
+  <div class="grid">
+    <div class="card"><div class="ic">▶️</div><h3>Reproductor integrado</h3><p>Cola de reproducción, pista anterior y siguiente, barra de progreso y volumen. El reproductor te acompaña en todas las vistas.</p></div>
+    <div class="card"><div class="ic">📂</div><h3>Tu colección local</h3><p>Reproduce los álbumes de tu carpeta de música con portadas, orden por nombre, fecha o año y buscador propio.</p></div>
+    <div class="card"><div class="ic">☁️</div><h3>Música online</h3><p>Busca por artista o álbum y escucha en streaming desde YouTube Music, sin llenar tu disco. Requiere conexión.</p></div>
+    <div class="card"><div class="ic">⭐</div><h3>Local y online, juntos</h3><p>Marca álbumes online con «Me gusta» y aparecen en Mis Álbumes junto a los locales, con una etiqueta ☁ ONLINE.</p></div>
+    <div class="card"><div class="ic">💿</div><h3>Modo disco de vinilo</h3><p>Vinilo gigante giratorio con la portada, lista de pistas y brazo de tocadiscos opcional. Pantalla completa, sin menús.</p></div>
+    <div class="card"><div class="ic">🎛️</div><h3>Integración con el escritorio</h3><p>Soporta MPRIS2: teclas multimedia y applets de sonido muestran «Vinilo», la pista y el artista.</p></div>
+    <div class="card"><div class="ic">🔎</div><h3>Búsqueda con autocompletado</h3><p>Encuentra artistas y álbumes al instante. Si dejas el álbum vacío, ves toda la discografía del artista.</p></div>
+    <div class="card"><div class="ic">🎨</div><h3>Aspecto personalizable</h3><p>Ocho colores de acento con degradado, y vinilo de fondo giratorio que puedes activar o desactivar.</p></div>
+    <div class="card"><div class="ic">⬇️</div><h3>Descarga opcional</h3><p>¿Quieres tener un álbum en tu equipo? Guárdalo con portada y etiquetas. Es un extra: escuchar es lo principal.</p></div>
+  </div>
+</div></section>
+
+<section id="modos" style="background:#0e0e13"><div class="wrap">
+  <span class="eyebrow">Modos de uso</span>
+  <h2>Tres formas de vivir la música</h2>
+  <p class="sub">Dos pestañas principales y un modo inmersivo a pantalla completa.</p>
+  <div class="modes">
+    <div class="mode"><div class="n g">01</div><div>
+      <h3>Mis Álbumes</h3>
+      <p>Tu biblioteca: álbumes locales y álbumes online marcados con «Me gusta», con portadas cuadradas al estilo de un disco de vinilo.</p>
+      <ul><li>Reproduce cualquier álbum con un clic, esté en tu equipo o en la nube.</li><li>Busca en tu colección y filtra por artista.</li><li>Ordena por nombre, fecha en que se añadió o año de lanzamiento.</li><li>Actualiza la lista si cambias archivos en la carpeta de música.</li></ul>
+    </div></div>
+    <div class="mode"><div class="n g">02</div><div>
+      <h3>Explorar Álbumes</h3>
+      <p>Descubre y escucha música online con la misma apariencia que tu colección.</p>
+      <ul><li>Dos campos con autocompletado: artista y álbum.</li><li>Resultados de álbumes y de artistas, con su discografía.</li><li>Escucha cada canción en streaming y guarda el álbum en Mis Álbumes con «Me gusta».</li><li>Si te interesa, descárgalo para tenerlo en local: elige pistas y formato.</li></ul>
+    </div></div>
+    <div class="mode"><div class="n g">03</div><div>
+      <h3>Modo disco de vinilo</h3>
+      <p>Sin menús: un vinilo grande y giratorio con la portada, la lista de pistas a la izquierda y el reproductor oculto, que aparece al acercar el ratón al borde inferior.</p>
+      <ul><li>Funciona con álbumes locales y online.</li><li>Brazo del tocadiscos opcional que recorre el disco según avanzan las pistas.</li><li>Pulsa <kbd>Esc</kbd> para salir del modo.</li></ul>
+    </div></div>
+  </div>
+
+  <h2 style="margin-top:56px">Personalízalo</h2>
+  <p class="sub" style="margin-bottom:0">Elige el color resaltado (se aplica a pestañas, botones y barras de progreso). Pruébalo aquí:</p>
+  <div class="sw" id="sw" role="group" aria-label="Color de acento"></div>
+  <p style="color:var(--mut);font-size:.9rem">También puedes activar o desactivar el vinilo de fondo giratorio con la portada y el brazo del tocadiscos.</p>
+</div></section>
+
+<section id="formatos"><div class="wrap">
+  <span class="eyebrow">Descarga opcional</span>
+  <h2>Si decides guardar un álbum en local</h2>
+  <p class="sub">Escuchar no requiere descargar nada. Si guardas un álbum, con portada y etiquetas, eliges el formato. La fuente de YouTube Music ya está comprimida (≈128–256 kbps). M4A y Opus se guardan sin recodificar; MP3 y FLAC recodifican.</p>
+  <div class="scroll"><table>
+    <tr><th>Formato</th><th>Proceso</th><th>Ideal para</th></tr>
+    <tr><td><b>M4A · AAC</b></td><td>Sin recodificar</td><td>Máxima fidelidad a la fuente, muy compatible</td></tr>
+    <tr><td><b>Opus</b></td><td>Sin recodificar</td><td>Buena calidad con poco tamaño</td></tr>
+    <tr><td><b>MP3 320 kbps</b></td><td>Recodificado</td><td>Reproductores antiguos y coches</td></tr>
+    <tr><td><b>FLAC</b></td><td>Recodificado desde la fuente</td><td>Archivado en contenedor sin pérdidas</td></tr>
+  </table></div>
+</div></section>
+
+<section id="descargar" style="background:#0e0e13"><div class="wrap">
+  <span class="eyebrow">Descarga</span>
+  <h2>Instala Vinilo en tu Linux</h2>
+  <div class="dl">
+    <div>
+      <p style="color:var(--mut);margin-bottom:18px">Reproductor de música para Linux en paquete Debian, listo para instalar. Las dependencias del sistema se resuelven automáticamente.</p>
+      <a class="btn p" href="https://github.com/hinetcode-code/vinilo-player/releases/download/v1.10.2/vinilo_1_10_2_all.deb" download>⬇ vinilo_1_10_2_all.deb</a>
+      <div class="chips"><span>🐧 Solo para Linux</span><span>📦 .deb</span><span>v1.10.2</span><span>Arquitectura: all</span></div>
+      <p style="color:var(--mut);font-size:.88rem"><b>Requisitos:</b> distribución basada en Debian/Ubuntu (p. ej. Linux Mint), Python 3.10 o superior y conexión a internet durante la instalación.</p>
+    </div>
+    <div>
+      <h3>Instalar</h3>
+<pre>cd ~/Descargas
+sudo apt install ./vinilo_1_10_2_all.deb</pre>
+      <h3>Abrir</h3>
+<pre>vinilo</pre>
+      <p style="color:var(--mut);font-size:.88rem;margin-bottom:14px">O búscalo como «Vinilo» en el menú de aplicaciones.</p>
+      <h3>Reparar componentes (sin conexión previa)</h3>
+<pre>sudo /usr/lib/vinilo/setup-deps.sh</pre>
+      <h3>Desinstalar</h3>
+<pre>sudo apt remove vinilo
+sudo rm -rf /opt/vinilo</pre>
+    </div>
+  </div>
+  <p style="color:var(--mut);font-size:.88rem;margin-top:18px">Al instalar se descargan <b>yt-dlp</b> y <b>ytmusicapi</b> (para la música online y las descargas, en un entorno Python propio) y <b>Deno</b> en <code>/opt/vinilo</code>. Dependencias del sistema: GTK3, GStreamer, ffmpeg y mutagen.</p>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <span class="eyebrow">Preguntas frecuentes</span>
+  <h2>FAQ</h2>
+  <details><summary>¿Necesito descargar la música para escucharla?</summary><p>No. Puedes escuchar álbumes online en streaming (con conexión) y marcarlos con «Me gusta» para tenerlos en Mis Álbumes. Descargar es opcional.</p></details>
+  <details><summary>Si descargo un álbum, ¿dónde se guarda?</summary><p>En la carpeta que elijas en Configuración, con la estructura Artista/Álbum (año)/NN - Título.</p></details>
+  <details><summary>¿Funciona en Windows o macOS?</summary><p>No. Vinilo está hecho para Linux y se distribuye como paquete .deb.</p></details>
+  <details><summary>Una pista falla con «Sign in to confirm your age»</summary><p>Inicia sesión en YouTube desde Firefox o Chrome, o guarda un archivo <code>cookies.txt</code> en <code>~/.config/vinilo/</code>, y vuelve a intentarlo.</p></details>
+  <details><summary>¿Cómo veo el registro de errores?</summary><p>En Configuración → Mantenimiento hay un botón para abrir la carpeta del registro.</p></details>
+</div></section>
+
+<footer><div class="wrap">
+  <p><b class="g">Vinilo</b> · v1.10.2 · Reproductor de música para Linux</p>
+  <p>Proyecto independiente, sin relación con YouTube ni Google. Si descargas contenido, hazlo solo si tienes derecho a ello y para uso personal.</p>
+</div></footer>
+
+<script>
+const A={Coral:["#ff3d5a","#ff7a45"],Naranja:["#ff7a1a","#ffb02e"],Oro:["#f5a300","#ffd23f"],Lima:["#1fbf6a","#8ee05a"],Turquesa:["#0aa5c4","#1fe0b0"],Azul:["#3d6bff","#2fc0ff"],Violeta:["#8a4dff","#d05cff"],Rosa:["#f0388f","#ff7a8a"]};
+const sw=document.getElementById("sw");
+Object.entries(A).forEach(([n,[a,b]],i)=>{
+  const x=document.createElement("button");
+  x.style.background=`linear-gradient(135deg,${a},${b})`;x.title=x.ariaLabel=n;
+  if(!i)x.className="on";
+  x.onclick=()=>{const r=document.documentElement.style;r.setProperty("--a",a);r.setProperty("--b",b);sw.querySelectorAll("button").forEach(k=>k.classList.remove("on"));x.classList.add("on")};
+  sw.appendChild(x);
+});
+</script>
+</body>
+</html>
